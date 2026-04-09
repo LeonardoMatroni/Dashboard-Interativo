@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Conciliação | Família Moto Express</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f5f3; --surface: #ffffff; --surface2: #f1efe8;
+    --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+    --text: #1a1a18; --text2: #5f5e5a; --text3: #888780;
+    --radius: 10px; --radius-sm: 7px;
+    --green: #1D9E75; --green-bg: #E1F5EE;
+    --orange: #D85A30; --orange-bg: #FAECE7;
+    --amber: #BA7517; --amber-bg: #FAEEDA;
+    --red: #E24B4A; --red-bg: #FCEBEB;
+    --blue: #378ADD; --blue-bg: #E6F1FB;
+    --gray: #888780; --gray-bg: #F1EFE8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a; --surface: #242422; --surface2: #2c2c2a;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+      --text: #f0ede6; --text2: #b4b2a9; --text3: #888780;
+      --green-bg: #085041; --orange-bg: #4A1B0C; --amber-bg: #412402;
+      --red-bg: #501313; --blue-bg: #042C53; --gray-bg: #2C2C2A;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  #loading { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 999; }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--border2); border-top-color: #378ADD; border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading p { font-size: 13px; color: var(--text3); }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 12px; flex-wrap: wrap; }
+  .logo { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+  .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: #378ADD; flex-shrink: 0; }
+
+  /* Seletor de mês no header */
+  .mes-select-wrap { display: flex; align-items: center; gap: 8px; }
+  .mes-select-wrap label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  #mesSel { font-family: inherit; font-size: 13px; font-weight: 500; padding: 5px 10px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); cursor: pointer; outline: none; }
+  #mesSel:focus { border-color: #378ADD; box-shadow: 0 0 0 3px rgba(55,138,221,.15); }
+
+  .main { max-width: 1300px; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
+
+  .tabs-row { display: flex; border-bottom: 1.5px solid var(--border); margin-bottom: 1.5rem; }
+  .tab { padding: 10px 28px; font-size: 13px; font-weight: 500; cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -1.5px; color: var(--text2); transition: color .15s; user-select: none; }
+  .tab.active { color: var(--text); border-bottom-color: #378ADD; }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  .filters { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .filters label { font-size: 12px; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  select { font-family: inherit; font-size: 13px; padding: 7px 12px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); cursor: pointer; min-width: 240px; outline: none; }
+  select:focus { border-color: #378ADD; box-shadow: 0 0 0 3px rgba(55,138,221,.15); }
+
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .kpi { background: var(--surface2); border-radius: var(--radius-sm); padding: 14px 16px; }
+  .kpi-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+  .kpi-value { font-size: 24px; font-weight: 600; }
+  .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .kpi.ok .kpi-value { color: var(--green); }
+  .kpi.err .kpi-value { color: var(--red); }
+  .kpi.warn .kpi-value { color: var(--amber); }
+  .kpi.info .kpi-value { color: var(--blue); }
+
+  .charts { display: grid; grid-template-columns: 300px 1fr; gap: 14px; margin-bottom: 14px; }
+  @media (max-width: 720px) { .charts { grid-template-columns: 1fr; } }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+  .card-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px; }
+  .legend-row { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+  .legend-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+  .legend-val { margin-left: auto; font-weight: 600; color: var(--text); font-size: 12px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; padding: 7px 10px; font-size: 10px; font-weight: 600; color: var(--text3); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  td { padding: 7px 10px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .bar-wrap { height: 5px; background: var(--surface2); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+  .bar-fill { height: 5px; border-radius: 3px; background: var(--green); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .badge-ok   { background: var(--green-bg);  color: var(--green);  }
+  .badge-err  { background: var(--orange-bg); color: var(--orange); }
+  .badge-warn { background: var(--amber-bg);  color: var(--amber);  }
+
+  .empty-msg { display: flex; align-items: center; justify-content: center; height: 140px; font-size: 13px; color: var(--text3); }
+  #error-msg { display: none; padding: 3rem 2rem; text-align: center; color: var(--text3); font-size: 14px; line-height: 2; }
+  footer { text-align: center; padding: 1.5rem; font-size: 11px; color: var(--text3); border-top: 1px solid var(--border); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Carregando dados...</p>
+</div>
+
+<div id="error-msg">
+  Não foi possível carregar os dados.<br>
+  Verifique se <code>meses.json</code> e a pasta <code>data/</code> estão no repositório.
+</div>
+
+<header>
+  <div class="logo">
+    <span class="logo-dot"></span>
+    Família Moto Express — Conciliação Logística
+  </div>
+  <div class="mes-select-wrap">
+    <label>Mês</label>
+    <select id="mesSel" onchange="carregarMes(this.value)"></select>
+  </div>
+</header>
+
+<div class="main" id="main" style="display:none">
+
+  <div class="tabs-row" id="tabs"></div>
+
+  <div class="filters">
+    <label>Cliente</label>
+    <select id="clienteSel" onchange="render()">
+      <option value="__all__">Todos os clientes</option>
+    </select>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="charts">
+    <div class="card">
+      <div class="card-title">Distribuição de status</div>
+      <div style="position:relative;height:200px">
+        <canvas id="donut" role="img" aria-label="Distribuição de status"></canvas>
+      </div>
+      <div id="legend" style="margin-top:16px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Erros por cliente</div>
+      <div id="barWrap" style="position:relative;height:240px">
+        <canvas id="barChart" role="img" aria-label="Erros por cliente"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Detalhamento por cliente</div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer id="footer">Família Moto Express</footer>
+
+<script>
+const LABELS = {
+  verde:'Conciliado', amarelo:'Não consta (amarelo)', laranja:'NF duplicada (laranja)',
+  roxo:'App + fixo (roxo)', vermelho:'Cancelado', azul:'Consta só no app (azul)', sem_cor:'Sem planilha'
+};
+const COLORS = {
+  verde:'#1D9E75', amarelo:'#BA7517', laranja:'#D85A30',
+  roxo:'#7F77DD', vermelho:'#E24B4A', azul:'#378ADD', sem_cor:'#888780'
+};
+
+let DATA = null;
+let currentApp = null;
+let donutChart = null, barChartInst = null;
+
+function fmt(n) { return (n || 0).toLocaleString('pt-BR'); }
+function sum(obj, keys) { return keys.reduce((a, k) => a + (obj[k] || 0), 0); }
+
+function setApp(app) {
+  currentApp = app;
+  document.querySelectorAll('.tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.app === app)
+  );
+  const sel = document.getElementById('clienteSel');
+  sel.innerHTML = '<option value="__all__">Todos os clientes</option>';
+  Object.keys(DATA.apps[app].clients).forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c; sel.appendChild(o);
+  });
+  render();
+}
+
+function getSelected() {
+  const v = document.getElementById('clienteSel').value;
+  const app = DATA.apps[currentApp];
+  if (v === '__all__') return { clients: app.clients, totals: app.totals };
+  const c = app.clients[v] || {};
+  return { clients: { [v]: c }, totals: { ...c } };
+}
+
+function render() {
+  const app = DATA.apps[currentApp];
+  const { clients, totals } = getSelected();
+  const ef = app.errorFields;
+  const cf = app.cancelField;
+  const pf = app.pendField;
+
+  const total = Object.values(totals).reduce((a, b) => a + b, 0);
+  const ok = totals.verde || 0;
+  const erros = sum(totals, ef);
+  const cancel = cf ? (totals[cf] || 0) : 0;
+  const pend = totals[pf] || 0;
+  const taxaOk = total > 0 ? Math.round(ok / total * 100) : 0;
+
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi">
+      <div class="kpi-label">Total pedidos</div>
+      <div class="kpi-value">${fmt(total)}</div>
+    </div>
+    <div class="kpi ok">
+      <div class="kpi-label">Conciliados</div>
+      <div class="kpi-value">${fmt(ok)}</div>
+      <div class="kpi-sub">${taxaOk}% do total</div>
+    </div>
+    <div class="kpi err">
+      <div class="kpi-label">Com erro</div>
+      <div class="kpi-value">${fmt(erros)}</div>
+      <div class="kpi-sub">${total > 0 ? Math.round(erros / total * 100) : 0}% do total</div>
+    </div>
+    ${cf ? `<div class="kpi warn">
+      <div class="kpi-label">Cancelados</div>
+      <div class="kpi-value">${fmt(cancel)}</div>
+      <div class="kpi-sub">${total > 0 ? Math.round(cancel / total * 100) : 0}% do total</div>
+    </div>` : ''}
+    <div class="kpi info">
+      <div class="kpi-label">Sem planilha</div>
+      <div class="kpi-value">${fmt(pend)}</div>
+    </div>
+  `;
+
+  const allFields = ['verde', ...ef, ...(cf ? [cf] : []), pf]
+    .filter((v, i, a) => a.indexOf(v) === i && (totals[v] || 0) > 0);
+
+  if (donutChart) donutChart.destroy();
+  donutChart = new Chart(document.getElementById('donut'), {
+    type: 'doughnut',
+    data: {
+      labels: allFields.map(f => LABELS[f]),
+      datasets: [{ data: allFields.map(f => totals[f] || 0), backgroundColor: allFields.map(f => COLORS[f]), borderWidth: 2, borderColor: 'transparent', hoverOffset: 5 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '68%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${fmt(ctx.raw)} (${total > 0 ? Math.round(ctx.raw / total * 100) : 0}%)` } }
+      }
+    }
+  });
+
+  document.getElementById('legend').innerHTML = allFields.map(f =>
+    `<div class="legend-row">
+      <span class="legend-dot" style="background:${COLORS[f]}"></span>
+      <span>${LABELS[f]}</span>
+      <span class="legend-val">${fmt(totals[f] || 0)}</span>
+    </div>`
+  ).join('');
+
+  const cliErr = Object.entries(clients)
+    .map(([name, c]) => ({ name, erros: sum(c, ef) }))
+    .filter(x => x.erros > 0)
+    .sort((a, b) => b.erros - a.erros)
+    .slice(0, 15);
+
+  const barWrap = document.getElementById('barWrap');
+  const barH = Math.max(180, cliErr.length * 42 + 70);
+  barWrap.style.height = barH + 'px';
+  if (barChartInst) barChartInst.destroy();
+
+  if (cliErr.length === 0) {
+    barWrap.innerHTML = '<div class="empty-msg">Nenhum erro para o filtro selecionado</div>';
+  } else {
+    barWrap.innerHTML = '<canvas id="barChart" role="img" aria-label="Erros por cliente"></canvas>';
+    barChartInst = new Chart(document.getElementById('barChart'), {
+      type: 'bar',
+      data: {
+        labels: cliErr.map(x => x.name),
+        datasets: [{ label: 'Erros', data: cliErr.map(x => x.erros), backgroundColor: '#D85A30cc', borderRadius: 4, borderSkipped: false }]
+      },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw} erros` } } },
+        scales: {
+          x: { grid: { color: 'rgba(128,128,128,.1)' }, ticks: { color: '#888', font: { size: 11 }, stepSize: 1 } },
+          y: { grid: { display: false }, ticks: { color: '#555', font: { size: 11 } } }
+        }
+      }
+    });
+  }
+
+  const hasCan = !!cf;
+  document.getElementById('thead').innerHTML = `
+    <th>Cliente</th>
+    <th style="text-align:right">Total</th>
+    <th style="text-align:right">Conciliados</th>
+    <th style="text-align:right">Erros</th>
+    ${hasCan ? '<th style="text-align:right">Cancel.</th>' : ''}
+    <th style="text-align:right">Sem planilha</th>
+    <th>Status</th>
+  `;
+
+  document.getElementById('tbody').innerHTML = Object.entries(clients)
+    .sort((a, b) => sum(b[1], ef) - sum(a[1], ef))
+    .map(([name, c]) => {
+      const tot = Object.values(c).reduce((a, b) => a + b, 0);
+      const cok = c.verde || 0;
+      const err = sum(c, ef);
+      const can = cf ? (c[cf] || 0) : 0;
+      const pnd = c[pf] || 0;
+      const pct = tot > 0 ? Math.round(cok / tot * 100) : 0;
+      const badge = err > 0 ? 'badge-err' : (pnd > 0 ? 'badge-warn' : 'badge-ok');
+      const badgeTxt = err > 0 ? `${err} erro${err > 1 ? 's' : ''}` : (pnd > 0 ? 'sem planilha' : 'OK');
+      return `<tr>
+        <td style="font-weight:500">${name}</td>
+        <td style="text-align:right">${fmt(tot)}</td>
+        <td style="text-align:right">
+          <div>${fmt(cok)}</div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div>
+        </td>
+        <td style="text-align:right;color:${err > 0 ? '#D85A30' : 'var(--text3)'};font-weight:${err > 0 ? 600 : 400}">${err || '—'}</td>
+        ${hasCan ? `<td style="text-align:right;color:${can > 0 ? '#E24B4A' : 'var(--text3)'}">${can || '—'}</td>` : ''}
+        <td style="text-align:right;color:${pnd > 0 ? '#BA7517' : 'var(--text3)'}">${pnd || '—'}</td>
+        <td><span class="badge ${badge}">${badgeTxt}</span></td>
+      </tr>`;
+    }).join('');
+}
+
+function initDashboard(data) {
+  DATA = data;
+  document.title = `Dashboard ${data.referencia} | Família Moto Express`;
+  document.getElementById('footer').textContent = `Família Moto Express — Conciliação ${data.referencia}`;
+
+  const tabsEl = document.getElementById('tabs');
+  tabsEl.innerHTML = '';
+  Object.keys(data.apps).forEach(app => {
+    const t = document.createElement('div');
+    t.className = 'tab';
+    t.dataset.app = app;
+    t.textContent = app === '99' ? '99' : app.charAt(0) + app.slice(1).toLowerCase();
+    t.onclick = () => setApp(app);
+    tabsEl.appendChild(t);
+  });
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('main').style.display = 'block';
+  setApp(Object.keys(data.apps)[0]);
+}
+
+function carregarMes(chave) {
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('loading').style.display = 'flex';
+
+  fetch(`data/${chave}.json`)
+    .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+    .then(initDashboard)
+    .catch(() => {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error-msg').style.display = 'block';
+    });
+}
+
+// Inicialização — carrega lista de meses
+fetch('meses.json')
+  .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+  .then(meses => {
+    const sel = document.getElementById('mesSel');
+    // Mais recente primeiro no dropdown
+    [...meses].reverse().forEach(m => {
+      const o = document.createElement('option');
+      o.value = m.chave; o.textContent = m.label; sel.appendChild(o);
+    });
+    // Carrega o mês mais recente por padrão
+    carregarMes(meses[meses.length - 1].chave);
+  })
+  .catch(() => {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error-msg').style.display = 'block';
+  });
+</script>
+</body>
+</html>
