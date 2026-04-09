@@ -1,0 +1,292 @@
+{
+  "referencia": "Janeiro 2026",
+  "chave": "2026-01",
+  "apps": {
+    "99": {
+      "totals": {
+        "verde": 12591,
+        "sem_cor": 44,
+        "amarelo": 66,
+        "laranja": 10,
+        "vermelho": 1,
+        "azul": 2
+      },
+      "errorFields": [
+        "amarelo",
+        "laranja",
+        "azul"
+      ],
+      "cancelField": "vermelho",
+      "pendField": "sem_cor",
+      "clients": {
+        "COBRA RECIFE": {
+          "verde": 699,
+          "amarelo": 9
+        },
+        "COBRA SANTO AMARO": {
+          "verde": 804,
+          "laranja": 4,
+          "amarelo": 2
+        },
+        "COBRA CAMPINAS": {
+          "verde": 1346,
+          "amarelo": 7
+        },
+        "COBRA PALMAS": {
+          "verde": 721,
+          "amarelo": 1
+        },
+        "COBRA BH": {
+          "verde": 983,
+          "amarelo": 16
+        },
+        "COBRA MONTES CLAROS": {
+          "verde": 541,
+          "vermelho": 1,
+          "laranja": 3
+        },
+        "METALSYSTEM": {
+          "verde": 868,
+          "amarelo": 8
+        },
+        "COBRA PORTO ALEGRE": {
+          "verde": 137,
+          "amarelo": 2
+        },
+        "COBRA GRU": {
+          "verde": 257
+        },
+        "FURACÃO OSASCO": {
+          "verde": 872,
+          "laranja": 2
+        },
+        "ANCHIETA CUB": {
+          "sem_cor": 29
+        },
+        "FURACÃO SOCORRO": {
+          "verde": 540
+        },
+        "COBRA OSASCO": {
+          "verde": 448,
+          "amarelo": 2
+        },
+        "COBRA SBC": {
+          "verde": 178,
+          "amarelo": 2
+        },
+        "SKY CAMPINAS": {
+          "verde": 6
+        },
+        "COBRA GOIANIA": {
+          "verde": 379,
+          "amarelo": 5
+        },
+        "COBRA SOROCABA": {
+          "verde": 348
+        },
+        "COBRA CAMPO GRANDE": {
+          "verde": 1242,
+          "amarelo": 12
+        },
+        "ANCHIETA CAMPINAS": {
+          "sem_cor": 15
+        },
+        "FURACÃO SANTO ANDRÉ": {
+          "verde": 713
+        },
+        "FURACÃO SOROCABA": {
+          "verde": 456,
+          "azul": 1
+        },
+        "FURACÃO CAMBUCI": {
+          "verde": 523,
+          "azul": 1
+        },
+        "COBRA ITAQUA": {
+          "verde": 381,
+          "laranja": 1
+        },
+        "FURACÃO PQ NOVO MUNDO": {
+          "verde": 109
+        },
+        "FAMILIA MOTO": {
+          "verde": 4
+        },
+        "PHIBRO": {
+          "verde": 2
+        },
+        "SKY GUARULHOS": {
+          "verde": 34
+        }
+      }
+    },
+    "UBER": {
+      "totals": {
+        "verde": 56,
+        "amarelo": 30,
+        "sem_cor": 39,
+        "laranja": 12
+      },
+      "errorFields": [
+        "amarelo",
+        "laranja"
+      ],
+      "cancelField": null,
+      "pendField": "sem_cor",
+      "clients": {
+        "FURACÃO SOCORRO": {
+          "verde": 8,
+          "amarelo": 3
+        },
+        "FURACÃO PQ NOVO MUNDO": {
+          "amarelo": 9,
+          "verde": 11
+        },
+        "FURACÃO SOROCABA": {
+          "verde": 4,
+          "amarelo": 2
+        },
+        "FURACÃO SANTO ANDRE": {
+          "verde": 20,
+          "amarelo": 11,
+          "laranja": 6
+        },
+        "ANCHIETA": {
+          "sem_cor": 38
+        },
+        "METAL": {
+          "verde": 2
+        },
+        "FURACÃO CAMBUCI": {
+          "verde": 4,
+          "amarelo": 3,
+          "laranja": 6
+        },
+        "FURACÃO OSASCO": {
+          "amarelo": 2,
+          "verde": 2
+        },
+        "COBRA CAMPO GRANDE": {
+          "verde": 1
+        },
+        "BETTER": {
+          "sem_cor": 1
+        },
+        "PHIBRO": {
+          "verde": 2
+        },
+        "NOVATEK": {
+          "verde": 2
+        }
+      }
+    },
+    "LALAMOVE": {
+      "totals": {
+        "vermelho": 48,
+        "verde": 3656,
+        "roxo": 10,
+        "laranja": 97,
+        "amarelo": 3,
+        "sem_cor": 6
+      },
+      "errorFields": [
+        "amarelo",
+        "laranja",
+        "roxo"
+      ],
+      "cancelField": "vermelho",
+      "pendField": "sem_cor",
+      "clients": {
+        "METALSYSTEM": {
+          "vermelho": 8,
+          "verde": 324
+        },
+        "FURACÃO PQ N MUNDO": {
+          "verde": 367,
+          "laranja": 22,
+          "vermelho": 6
+        },
+        "FURACÃO SOCORRO": {
+          "verde": 487,
+          "vermelho": 5,
+          "laranja": 36
+        },
+        "FURACÃO SANTO ANDRE": {
+          "verde": 787,
+          "laranja": 29,
+          "vermelho": 3,
+          "roxo": 5
+        },
+        "VERIFICAR": {
+          "verde": 7,
+          "vermelho": 1,
+          "sem_cor": 1
+        },
+        "SKY GUARULHOS": {
+          "verde": 369,
+          "vermelho": 4
+        },
+        "FURACÃO OSASCO": {
+          "verde": 485,
+          "vermelho": 6,
+          "laranja": 4
+        },
+        "COBRA MG": {
+          "verde": 20,
+          "vermelho": 1
+        },
+        "SKY CAMPINAS": {
+          "verde": 196,
+          "vermelho": 4
+        },
+        "FURACÃO CAMBUCI": {
+          "verde": 381,
+          "roxo": 5,
+          "laranja": 4,
+          "vermelho": 2
+        },
+        "LIDER": {
+          "verde": 2,
+          "sem_cor": 1
+        },
+        "FURACÃO SOROCABA": {
+          "verde": 91,
+          "amarelo": 3,
+          "vermelho": 4,
+          "laranja": 2
+        },
+        "Auxiliar 5": {
+          "verde": 49
+        },
+        "Auxiliar 2": {
+          "verde": 4,
+          "vermelho": 3
+        },
+        "AXALTA": {
+          "verde": 19
+        },
+        "MetalSystem": {
+          "verde": 4
+        },
+        "FURACÃO TEAM AIR": {
+          "verde": 10
+        },
+        "Auxiliar 1": {
+          "vermelho": 1,
+          "verde": 2
+        },
+        "Camille": {
+          "verde": 4,
+          "sem_cor": 1
+        },
+        "Auxiliar 04": {
+          "verde": 48,
+          "sem_cor": 2
+        },
+        "": {
+          "sem_cor": 1
+        }
+      }
+    }
+  }
+}
