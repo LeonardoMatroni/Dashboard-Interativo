@@ -4,9 +4,9 @@
   "apps": {
     "99": {
       "totals": {
-        "verde": 12591,
+        "verde": 12597,
         "sem_cor": 44,
-        "amarelo": 66,
+        "amarelo": 60,
         "laranja": 10,
         "vermelho": 1,
         "azul": 2
@@ -85,8 +85,8 @@
           "verde": 348
         },
         "COBRA CAMPO GRANDE": {
-          "verde": 1242,
-          "amarelo": 12
+          "verde": 1248,
+          "amarelo": 6
         },
         "ANCHIETA CAMPINAS": {
           "sem_cor": 15
@@ -134,17 +134,16 @@
       "cancelField": null,
       "pendField": "sem_cor",
       "clients": {
-        "FURACÃO SOCORRO": {
-          "verde": 8,
+        "Furacão SOCORRO": {
+          "verde": 7,
           "amarelo": 3
         },
         "FURACÃO PQ NOVO MUNDO": {
           "amarelo": 9,
           "verde": 11
         },
-        "FURACÃO SOROCABA": {
-          "verde": 4,
-          "amarelo": 2
+        "Furacão  sorocaba": {
+          "verde": 1
         },
         "FURACÃO SANTO ANDRE": {
           "verde": 20,
@@ -162,7 +161,14 @@
           "amarelo": 3,
           "laranja": 6
         },
-        "FURACÃO OSASCO": {
+        "FURACÃO SOCORRO": {
+          "verde": 1
+        },
+        "FURACÃO SOROCABA": {
+          "verde": 3,
+          "amarelo": 2
+        },
+        "Furacão Osasco": {
           "amarelo": 2,
           "verde": 2
         },
